@@ -68,7 +68,7 @@ const borderPaddingClass = computed(() => {
 
   
   <div
-    class="photo-frame-card w-full shadow-lagi transition-colors duration-200 select-none text-left"
+    class="photo-frame-card w-full shadow-lagi transition-colors duration-200 select-none text-left relative"
     :class="[borderPaddingClass, customClass]"
     :style="{ backgroundColor: theme.bg }"
   >
@@ -84,7 +84,7 @@ const borderPaddingClass = computed(() => {
     </div>
 
     <!-- 📝 2. AREA FOOTER METADATA (Teks di bawah foto) -->
-    <div class="flex items-end justify-between">
+    <div class="flex items-center justify-between">
     <div class="metadata-footer pt-2 pb-3 font-primary px-0.5">
       
       <!-- BARIS 1: Judul Foto (Titillium Web Bold) -->
@@ -96,11 +96,11 @@ const borderPaddingClass = computed(() => {
         {{ photoStore.metadata.title }}
       </h2>
       
-        <div class="flex flex-col space-y-0.5 mt-0.5">
+        <div class="flex flex-col gap-1.5 mt-1">
   <!-- BARIS 2: Keterangan Lensa / Kamera (Subtitle) -->
         <p
           v-if="photoStore.metadata.lensInfo"
-          class="frame-subtitle text-[9px] font-medium leading-tight"
+          class="frame-subtitle text-[9px] font-medium leading-1.5 "
           :style="{ color: theme.subtitle }"
         >
           {{ photoStore.metadata.lensInfo }}
@@ -109,7 +109,7 @@ const borderPaddingClass = computed(() => {
         <!-- BARIS 3: Metrik File (Ukuran | Dimensi | Resolusi MP) -->
         <div
           v-if="photoStore.fileMetricsRow && photoStore.fileMetricsRow.length"
-          class="frame-metrics flex items-center divide-x divide-gray-200 text-[9px] font-medium"
+          class="frame-metrics flex items-center divide-x divide-gray-200 text-[9px] leading-1.5 font-medium "
           :style="{ color: theme.metrics }"
         >
           <span
@@ -124,7 +124,7 @@ const borderPaddingClass = computed(() => {
         <!-- BARIS 4: Parameter Eksposur (ISO | Focal Length | EV | Aperture | Shutter Speed) -->
         <div
           v-if="photoStore.exposureSettingsRow && photoStore.exposureSettingsRow.length"
-          class="frame-exposure flex items-center divide-x divide-gray-200 text-[9px] font-medium"
+          class="frame-exposure flex items-center divide-x divide-gray-200 text-[9px] leading-1.5 font-medium "
           :style="{ color: theme.exposure }"
         >
           <span
@@ -139,7 +139,7 @@ const borderPaddingClass = computed(() => {
         
       </div>
 
-      <div class="text-gray-800 fixed bottom-7 right-3 z-50">
+      <div class="text-gray-800 px-2 pt-2">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="813px" height="800px" viewBox="0 0 813 800" xml:space="preserve" class="h-9 w-auto"><path fill="currentColor" d="M413.029,11.792L76.549,204.401l-1.435,387.546L410.02,786.964l336.369-192.545l0.102-379.883
 		L413.029,11.792z M714.207,583.989c-1.279,0.732-2.775,1.589-4.52,2.588c-9.634,5.516-12.097-2.801-12.09-8.436
 		c0.036-30.669,0.123-73.593,0.025-80.455c-0.411-28.802-0.193-33.682-11.089-42.519c-4.803-3.895-20.933-16.387-32.857-25.596
