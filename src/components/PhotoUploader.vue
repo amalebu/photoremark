@@ -63,7 +63,7 @@ const loadSampleImage = async () => {
       <button
         type="button"
         @click="triggerFileInput"
-        class="w-full rounded-[24px] border-2 border-dashed border-ink/25 bg-soft/60 py-9 sm:py-12 lg:py-16 px-4 flex flex-col items-center gap-3 active:bg-soft transition-colors"
+        class="w-full rounded-2xl border-2 border-dashed border-ink/25 bg-soft/60 py-9 sm:py-12 lg:py-16 px-4 flex flex-col items-center gap-3 active:bg-soft transition-colors"
       >
         <div class="w-16 h-16 rounded-full bg-primary border border-ink flex items-center justify-center">
           <UploadCloud class="w-8 h-8 text-ink" />
@@ -75,7 +75,7 @@ const loadSampleImage = async () => {
             <span class="hidden lg:inline">Klik untuk pilih file, atau seret &amp; lepas foto ke sini</span>
           </p>
         </div>
-        <div class="flex items-center gap-1.5 text-[12px] font-semibold">
+        <div class="flex items-center gap-1.5 text-xs font-semibold">
           <span class="px-3 py-0.5 rounded-full bg-white border border-hairline">JPEG</span>
           <span class="px-3 py-0.5 rounded-full bg-white border border-hairline">PNG</span>
           <span class="px-3 py-0.5 rounded-full bg-white border border-hairline">WEBP</span>
@@ -87,7 +87,7 @@ const loadSampleImage = async () => {
       <button
         type="button"
         @click="triggerFileInput"
-        class="mt-4 w-full bg-ink text-white rounded-[28px] py-3.5 text-base font-semibold active:scale-[0.98] transition-transform"
+        class="mt-4 w-full bg-ink text-white rounded-full py-3.5 text-base font-semibold active:scale-[0.98] transition-transform"
       >
         Upload Foto
       </button>
@@ -97,7 +97,7 @@ const loadSampleImage = async () => {
     <button
       type="button"
       @click.stop="loadSampleImage"
-      class="w-full flex items-center justify-center gap-2 bg-primary text-ink border border-ink rounded-[36px] py-3.5 text-base font-semibold active:scale-[0.98] transition-transform"
+      class="w-full flex items-center justify-center gap-2 bg-primary text-ink border border-ink rounded-full py-3.5 text-base font-semibold active:scale-[0.98] transition-transform"
     >
       <Sparkles class="w-4.5 h-4.5" />
       Coba contoh "Sol Sepatu"
