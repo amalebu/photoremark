@@ -14,8 +14,8 @@ File ini berupa komponen Vue murni dengan **HTML** dan **Tailwind CSS**. Anda bi
 | `photoStore.imageUrl` | URL gambar foto asli | `blob:http://...` |
 | `photoStore.metadata.title` | Judul foto (Baris 1) | `"Sol Sepatu"` |
 | `photoStore.metadata.lensInfo` | Info lensa / kamera (Baris 2) | `"Telephoto lens - 69mm"` |
-| `photoStore.fileMetricsRow` | Metrik file gabungan (Baris 3) | `"728 KB   \|   2332x3108   \|   7MP"` |
-| `photoStore.exposureSettingsRow` | Parameter eksposur gabungan (Baris 4) | `"ISO 25   \|   69mm   \|   0.0ev   \|   F2.4   \|   1/1250 s"` |
+| `photoStore.fileMetricsRow` | Metrik file (Baris 3) - Array | `["728 KB", "2332x3108", "7MP"]` |
+| `photoStore.exposureSettingsRow` | Parameter eksposur (Baris 4) - Array | `["ISO 25", "69mm", "0.0ev", "F2.4", "1/1250 s"]` |
 | `photoStore.metadata.iso` | ISO saja | `"ISO 25"` |
 | `photoStore.metadata.focalLength`| Focal length saja | `"69mm"` |
 | `photoStore.metadata.ev` | Nilai EV saja | `"0.0ev"` |
@@ -44,4 +44,4 @@ Tambahkan baris HTML baru di dalam `metadata-footer`:
 #### 3. Mengubah Warna Bingkai atau Font
 Ubah objek `theme` pada bagian `<script setup>` atau tambahkan style di `<style scoped>`.
 
-Perubahan apapun yang Anda simpan di file ini akan **langsung terlihat secara real-time** pada layar HP maupun pada hasil unduhan (Download PNG / JPG)!
+Perubahan apapun yang Anda simpan di file ini akan **langsung terlihat secara real-time** pada layar HP maupun pada hasil unduhan (Download Foto JPG 100%)!

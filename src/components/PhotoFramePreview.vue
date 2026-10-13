@@ -15,6 +15,7 @@ import {
 } from 'lucide-vue-next'
 import { toBlob } from 'html-to-image'
 import confetti from 'canvas-confetti'
+import MetadataEditor from './MetadataEditor.vue'
 
 const photoStore = usePhotoStore()
 
@@ -102,8 +103,8 @@ const handleKeydown = (e) => {
   }
 }
 
-// Download at 100% uncompressed quality directly from the HTML template!
-const downloadImage = async (format = 'png') => {
+// Download at 100% quality directly from the HTML template strictly as JPG
+const downloadImage = async () => {
   if (!frameTemplateRef.value) return
   isDownloading.value = true
 
@@ -119,16 +120,15 @@ const downloadImage = async (format = 'png') => {
       await document.fonts.ready
     }
 
-    const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
     const blob = await toBlob(el, {
       pixelRatio: pixelRatio,
       quality: 1.0,
-      type: mimeType,
+      type: 'image/jpeg',
       cacheBust: false,
     })
 
     if (!blob) {
-      throw new Error('Gagal menghasilkan file dari template HTML')
+      throw new Error('Gagal menghasilkan file JPG dari template HTML')
     }
 
     const url = URL.createObjectURL(blob)
@@ -137,7 +137,7 @@ const downloadImage = async (format = 'png') => {
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_')
     a.href = url
-    a.download = `${sanitizedTitle}_framed.${format === 'jpeg' ? 'jpg' : 'png'}`
+    a.download = `${sanitizedTitle}_framed.jpg`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -238,14 +238,14 @@ onUnmounted(() => {
 
     <!-- Preview stage (tap to replace image) -->
     <div
-      class="relative w-full bg-white border border-hairline rounded-[28px] shadow-float p-3 sm:p-6 flex flex-col items-center justify-center min-h-[380px] lg:min-h-[520px] overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
+      class="relative w-full mb-5 rounded-[28px] p-3 sm:p-6 flex flex-col items-center justify-center overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
       @click="triggerReplaceImage"
       title="Ketuk foto untuk mengganti gambar tanpa merubah metadata"
     >
       <button
         type="button"
         @click.stop="openFullscreen"
-        class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-ink text-white flex items-center justify-center shadow-float active:scale-95 transition-transform"
+        class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-ink text-white flex items-center justify-center active:scale-95 transition-transform"
         title="Buka layar penuh"
       >
         <Maximize2 class="w-4 h-4" />
@@ -254,7 +254,7 @@ onUnmounted(() => {
       <!-- Mode 1: Framed (HTML template) -->
       <div
         v-show="viewMode === 'framed'"
-        class="relative flex justify-center w-full max-w-sm sm:max-w-md"
+        class="relative flex justify-center w-full max-w-sm sm:max-w-md "
       >
         <PhotoFrameTemplate ref="frameTemplateRef" />
       </div>
@@ -276,15 +276,11 @@ onUnmounted(() => {
     </div>
 
         <!-- Edit Judul Foto (Langsung di atas tombol download) -->
-    <div class="bg-white border border-hairline rounded-[22px] p-3.5 sm:p-4 shadow-float space-y-2">
+    <div class="bg-white border border-hairline rounded-[22px] p-3.5 sm:p-4 shadow-float space-y-2 block lg:hidden">
       <div class="flex items-center justify-between gap-2">
-        <label for="quick-photo-title" class="flex items-center gap-2 text-xs sm:text-[13px] font-bold text-ink cursor-pointer select-none">
-          <Type class="w-4 h-4 text-ink" />
+        <label for="quick-photo-title" class="px-1 flex items-center gap-2 text-xs sm:text-[13px] font-bold text-ink cursor-pointer select-none">
           <span>Judul Foto</span>
         </label>
-        <span class="text-[11px] text-muted font-medium truncate">
-          Tampil di bingkai & nama file
-        </span>
       </div>
       <div class="relative flex items-center">
         <input
@@ -305,6 +301,10 @@ onUnmounted(() => {
           <X class="w-3.5 h-3.5" />
         </button>
       </div>
+    </div>
+
+    <div class="block lg:hidden">
+      <MetadataEditor />
     </div>
 
     <!-- Secondary actions -->
@@ -329,28 +329,17 @@ onUnmounted(() => {
     </div>
 
 
-    <!-- Download: black primary pill + mint-green pill -->
-    <div class="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3">
+    <!-- Download: Single prominent JPG button (No PNG) -->
+    <div>
       <button
         type="button"
-        @click="downloadImage('png')"
+        @click="downloadImage"
         :disabled="isDownloading"
-        class="w-full flex items-center justify-center gap-2 py-3.5 bg-ink text-white rounded-[28px] text-base font-semibold active:scale-[0.98] transition-transform disabled:opacity-50"
+        class="w-full flex items-center justify-center gap-2 py-3.5 bg-ink hover:bg-ink/90 active:scale-[0.98] text-white rounded-[28px] text-base font-semibold transition-all disabled:opacity-50 shadow-float"
       >
         <Check v-if="downloadSuccess" class="w-4.5 h-4.5 text-primary" />
-        <Download v-else class="w-4.5 h-4.5" />
-        <span>{{ isDownloading ? 'Memproses...' : (downloadSuccess ? 'Tersimpan!' : 'Download PNG (Lossless)') }}</span>
-      </button>
-
-      <button
-        type="button"
-        @click="downloadImage('jpeg')"
-        :disabled="isDownloading"
-        title="Download format JPG kualitas 100%"
-        class="w-full flex items-center justify-center gap-2 py-3.5 bg-primary text-ink border border-ink rounded-[36px] text-base font-semibold active:scale-[0.98] transition-transform disabled:opacity-50"
-      >
-        <FileDown class="w-4.5 h-4.5" />
-        Download JPG 100%
+        <Download v-else class="w-4.5 h-4.5 text-white" />
+        <span>{{ isDownloading ? 'Memproses Unduhan...' : (downloadSuccess ? 'Foto JPG Berhasil Disimpan!' : 'Download Foto (JPG 100%)') }}</span>
       </button>
     </div>
 
@@ -409,13 +398,13 @@ onUnmounted(() => {
 
           <button
             type="button"
-            @click="downloadImage('png')"
+            @click="downloadImage"
             :disabled="isDownloading"
             class="flex-1 flex items-center justify-center gap-1.5 py-3 bg-primary text-ink border border-white/20 rounded-[36px] text-sm font-semibold active:scale-95 transition-transform disabled:opacity-50"
           >
             <Check v-if="downloadSuccess" class="w-4 h-4" />
             <Download v-else class="w-4 h-4" />
-            {{ isDownloading ? 'Memproses...' : (downloadSuccess ? 'Tersimpan!' : 'Download Full-Res') }}
+            {{ isDownloading ? 'Memproses...' : (downloadSuccess ? 'Tersimpan!' : 'Download JPG (100%)') }}
           </button>
         </div>
       </div>

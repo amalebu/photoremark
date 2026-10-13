@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import exifr from 'exifr'
-import { isHeicFile, heicToPngBlob } from '../utils/heic'
+import { isHeicFile, heicToJpegBlob } from '../utils/heic'
 
 export const usePhotoStore = defineStore('photo', {
   state: () => ({
@@ -41,7 +41,7 @@ export const usePhotoStore = defineStore('photo', {
     frameConfig: {
       theme: 'white', // 'white' | 'dark' | 'mint'
       borderScale: 'compact', // 'compact' (paling tipis) | 'normal' | 'spacious'
-      exportFormat: 'png', // 'png' (lossless) | 'jpeg' (100% quality)
+      exportFormat: 'jpeg', // 'jpeg' (100% quality)
       showTitle: true,
       showLensInfo: true,
       showFileMetrics: true,
@@ -52,17 +52,51 @@ export const usePhotoStore = defineStore('photo', {
   getters: {
     hasImage: (state) => !!state.imageUrl && state.originalDimensions.width > 0,
     
-    // Row 1 preview text (File metrics)
+    // Row 1 / Baris 3: File metrics as array of strings
     fileMetricsRow: (state) => {
+      const parts = []
+      if (state.metadata.fileSize) parts.push(state.metadata.fileSize)
+      if (state.metadata.dimensionsText) parts.push(state.metadata.dimensionsText)
+      if (state.metadata.megapixelsText) parts.push(state.metadata.megapixelsText)
+      return parts
+    },
+
+    // Row 2 / Baris 4: Exposure settings as array of strings
+    exposureSettingsRow: (state) => {
+      const parts = []
+      if (state.metadata.iso) parts.push(state.metadata.iso)
+      if (state.metadata.focalLength) parts.push(state.metadata.focalLength)
+      if (state.metadata.ev) parts.push(state.metadata.ev)
+      if (state.metadata.aperture) parts.push(state.metadata.aperture)
+      if (state.metadata.shutterSpeed) parts.push(state.metadata.shutterSpeed)
+      return parts
+    },
+
+    // Aliases
+    fileMetrics: (state) => {
+      const parts = []
+      if (state.metadata.fileSize) parts.push(state.metadata.fileSize)
+      if (state.metadata.dimensionsText) parts.push(state.metadata.dimensionsText)
+      if (state.metadata.megapixelsText) parts.push(state.metadata.megapixelsText)
+      return parts
+    },
+    exposureSettings: (state) => {
+      const parts = []
+      if (state.metadata.iso) parts.push(state.metadata.iso)
+      if (state.metadata.focalLength) parts.push(state.metadata.focalLength)
+      if (state.metadata.ev) parts.push(state.metadata.ev)
+      if (state.metadata.aperture) parts.push(state.metadata.aperture)
+      if (state.metadata.shutterSpeed) parts.push(state.metadata.shutterSpeed)
+      return parts
+    },
+    fileMetricsRowText: (state) => {
       const parts = []
       if (state.metadata.fileSize) parts.push(state.metadata.fileSize)
       if (state.metadata.dimensionsText) parts.push(state.metadata.dimensionsText)
       if (state.metadata.megapixelsText) parts.push(state.metadata.megapixelsText)
       return parts.join('   |   ')
     },
-
-    // Row 2 preview text (Exposure settings)
-    exposureSettingsRow: (state) => {
+    exposureSettingsRowText: (state) => {
       const parts = []
       if (state.metadata.iso) parts.push(state.metadata.iso)
       if (state.metadata.focalLength) parts.push(state.metadata.focalLength)
@@ -107,19 +141,19 @@ export const usePhotoStore = defineStore('photo', {
     },
 
     // Menghasilkan URL gambar yang bisa ditampilkan browser.
-    // HEIC/HEIF di-decode ke PNG (tanpa kompresi tambahan); format lain dipakai apa adanya.
+    // HEIC/HEIF di-decode ke JPEG (kualitas 100%); format lain dipakai apa adanya.
     async createDisplayUrl(file) {
       const heic = await isHeicFile(file)
       this.loadingMessage = heic
-        ? 'Mengonversi HEIC ke PNG (tanpa kompresi)...'
+        ? 'Mengonversi HEIC ke JPG (kualitas 100%)...'
         : 'Memuat foto...'
       let blob = file
       if (heic) {
         try {
-          blob = await heicToPngBlob(file)
+          blob = await heicToJpegBlob(file)
         } catch (err) {
           console.error('HEIC convert error:', err)
-          throw new Error('Gagal membaca file HEIC. Coba file lain atau ekspor ke JPG/PNG dulu.')
+          throw new Error('Gagal membaca file HEIC. Coba file lain atau ekspor ke JPG dulu.')
         }
       }
       return URL.createObjectURL(blob)

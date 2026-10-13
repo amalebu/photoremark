@@ -9,7 +9,7 @@
 ## ✨ Fitur Utama
 
 - **100% Client-Side:** Privasi aman, seluruh foto diproses lokal di browser pengguna tanpa pernah diunggah ke server backend.
-- **Tanpa Kompresi (Lossless 1:1):** Foto dipertahankan pada resolusi asli saat diunggah maupun saat diunduh (PNG Lossless & JPG 100%).
+- **Tanpa Kompresi (Lossless 1:1):** Foto dipertahankan pada resolusi asli saat diunggah maupun saat diunduh (JPG 100% Max Quality).
 - **Dukungan Format Luas:** JPEG, PNG, WEBP, dan **HEIC / HEIF** (Apple iPhone & Samsung Galaxy).
 - **Ekstraksi EXIF Otomatis & Akurat:**
   - Mendeteksi Model Kamera, Aperture, Shutter Speed, ISO, dan Exposure Bias (EV).
@@ -27,7 +27,7 @@
 - **Pinia**
 - **Tailwind CSS v4**
 - **exifr** (Client-side EXIF parser)
-- **heic-to** (HEIC to PNG decoder)
+- **heic-to** (HEIC to JPEG decoder)
 - **html-to-image** (High-res DOM capture)
 - **Lucide Icons**
 

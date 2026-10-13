@@ -1,6 +1,5 @@
 // Dukungan file HEIC/HEIF.
-// Browser selain Safari tidak bisa menampilkan HEIC, jadi di-decode ke PNG
-// (lossless terhadap hasil decode, tanpa kompresi tambahan).
+// Browser selain Safari tidak bisa menampilkan HEIC, jadi di-decode ke JPEG 100%
 // EXIF tetap dibaca dari file HEIC ASLI (exifr mendukung HEIC).
 
 const HEIC_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1']
@@ -21,7 +20,10 @@ export const isHeicFile = async (file) => {
 }
 
 // Lazy-load library (wasm berukuran besar) hanya saat benar-benar dibutuhkan.
-export const heicToPngBlob = async (file) => {
+export const heicToJpegBlob = async (file) => {
   const { heicTo } = await import('heic-to')
-  return heicTo({ blob: file, type: 'image/png', quality: 1 })
+  return heicTo({ blob: file, type: 'image/jpeg', quality: 1 })
 }
+
+// Alias for backwards compatibility
+export const heicToPngBlob = heicToJpegBlob

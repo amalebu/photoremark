@@ -124,7 +124,7 @@ const stats = [
           <div class="lg:col-span-7 min-w-0">
             <PhotoFramePreview />
           </div>
-          <div class="lg:col-span-5 min-w-0 lg:sticky lg:top-24">
+          <div class="hidden lg:block lg:col-span-5 min-w-0 lg:sticky lg:top-24">
             <MetadataEditor />
           </div>
         </div>

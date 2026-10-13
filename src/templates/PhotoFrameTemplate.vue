@@ -65,8 +65,10 @@ const borderPaddingClass = computed(() => {
     - Menambahkan logo kamera, watermark nama Anda, atau tanggal foto
     =============================================================================
   -->
+
+  
   <div
-    class="photo-frame-card w-full shadow-2xl transition-colors duration-200 select-none text-left"
+    class="photo-frame-card w-full shadow-lagi transition-colors duration-200 select-none text-left"
     :class="[borderPaddingClass, customClass]"
     :style="{ backgroundColor: theme.bg }"
   >
@@ -82,12 +84,12 @@ const borderPaddingClass = computed(() => {
     </div>
 
     <!-- 📝 2. AREA FOOTER METADATA (Teks di bawah foto) -->
-    <div class="metadata-footer pt-3 sm:pt-4 pb-1 sm:pb-2">
+    <div class="metadata-footer pt-3 pb-5 font-primary px-0.5">
       
       <!-- BARIS 1: Judul Foto (Titillium Web Bold) -->
       <h2
         v-if="photoStore.metadata.title"
-        class="frame-title font-bold text-lg tracking-tight leading-tight"
+        class="frame-title font-bold tracking-tight leading-tight"
         :style="{ color: theme.title }"
       >
         {{ photoStore.metadata.title }}
@@ -96,49 +98,60 @@ const borderPaddingClass = computed(() => {
       <!-- BARIS 2: Keterangan Lensa / Kamera (Subtitle) -->
       <p
         v-if="photoStore.metadata.lensInfo"
-        class="frame-subtitle text-[10px] font-medium leading-normal"
+        class="frame-subtitle text-[10px] font-medium leading-tight my-0.5"
         :style="{ color: theme.subtitle }"
       >
         {{ photoStore.metadata.lensInfo }}
       </p>
 
       <!-- BARIS 3: Metrik File (Ukuran | Dimensi | Resolusi MP) -->
-      <p
-        v-if="photoStore.fileMetricsRow"
-        class="frame-metrics text-[10px] font-medium leading-normal tracking-wide"
+      <div
+        v-if="photoStore.fileMetricsRow && photoStore.fileMetricsRow.length"
+        class="frame-metrics flex items-center divide-x divide-gray-200 text-[10px] font-medium leading-tight mt-0.5"
         :style="{ color: theme.metrics }"
       >
-        {{ photoStore.fileMetricsRow }}
-      </p>
+        <span
+          v-for="(item, index) in photoStore.fileMetricsRow"
+          :key="index"
+          class="px-1 first:pl-0 last:pr-0"
+        >
+          {{ item }}
+        </span>
+      </div>
 
       <!-- BARIS 4: Parameter Eksposur (ISO | Focal Length | EV | Aperture | Shutter Speed) -->
-      <p
-        v-if="photoStore.exposureSettingsRow"
-        class="frame-exposure text-[10px] font-medium leading-normal tracking-wide"
+      <div
+        v-if="photoStore.exposureSettingsRow && photoStore.exposureSettingsRow.length"
+        class="frame-exposure flex items-center divide-x divide-gray-200 text-[10px] font-medium leading-tight"
         :style="{ color: theme.exposure }"
       >
-        {{ photoStore.exposureSettingsRow }}
-      </p>
+        <span
+          v-for="(item, index) in photoStore.exposureSettingsRow"
+          :key="index"
+          class="px-1 first:pl-0 last:pr-0"
+        >
+          {{ item }}
+        </span>
+      </div>
 
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 
-  Anda juga bisa menambahkan style CSS kustom di sini sesuai selera!
-*/
-.photo-frame-card {
-  font-family: "Inter", Helvetica, Arial, sans-serif;
-}
-
-/* Judul memakai font display Jobright */
-.frame-title {
-  font-family: "Titillium Web", "Arial Narrow", system-ui, sans-serif;
-}
-
 .photo-wrapper img {
-  /* Memastikan foto ditampilkan tajam tanpa distorsi */
   image-rendering: auto;
+}
+
+/* Dukungan fleksibel bila Anda menulis devide-x atau divide-x */
+.devide-x > :not([hidden]) ~ :not([hidden]) {
+  border-left-width: 1px;
+}
+.devide-gray-300 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #d1d5db;
+}
+
+.shadow-lagi{
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 </style>
