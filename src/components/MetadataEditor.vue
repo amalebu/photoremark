@@ -37,6 +37,11 @@ const borders = [
   { id: 'spacious', label: 'Lebar' },
 ]
 
+const templates = [
+  { id: 'template1', label: 'Template 1', desc: 'Studio Minimal' },
+  { id: 'template2', label: 'Template 2', desc: 'Noir Spotlight' },
+]
+
 const inputClass =
   'w-full bg-white border border-hairline rounded-[12px] px-3 py-2.5 text-sm font-medium text-ink placeholder:text-muted focus:outline-none focus:border-ink transition-colors'
 </script>
@@ -105,7 +110,29 @@ const inputClass =
         </div>
       </div>
 
-      <!-- Theme -->
+      <!-- Pilihan Template -->
+      <div class="pt-4 border-t border-hairline">
+        <span class="block text-[13px] font-semibold mb-2">Pilihan Template Frame</span>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            v-for="tpl in templates"
+            :key="tpl.id"
+            type="button"
+            @click="photoStore.setTemplate(tpl.id)"
+            class="flex flex-col items-start p-2.5 rounded-[16px] border text-left transition-colors active:scale-[0.98]"
+            :class="photoStore.frameConfig.templateId === tpl.id
+              ? 'bg-ink text-white border-ink'
+              : 'bg-white text-ink border-hairline hover:bg-soft'"
+          >
+            <span class="text-xs font-bold">{{ tpl.label }}</span>
+            <span class="text-[11px] font-medium" :class="photoStore.frameConfig.templateId === tpl.id ? 'text-primary' : 'text-muted'">
+              {{ tpl.desc }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Theme & Border (Berlaku untuk kartu di kedua template) -->
       <div class="pt-4 border-t border-hairline space-y-4">
         <div>
           <span class="block text-[13px] font-semibold mb-2">Tema warna</span>

@@ -11,13 +11,29 @@ import {
   FileDown,
   Maximize2,
   X,
-  Type
+  Type,
+  LayoutTemplate
 } from 'lucide-vue-next'
 import { toCanvas } from 'html-to-image'
 import confetti from 'canvas-confetti'
 import MetadataEditor from './MetadataEditor.vue'
 
 const photoStore = usePhotoStore()
+
+const templateOptions = [
+  {
+    id: 'template1',
+    name: 'Template 1',
+    label: 'Studio Minimal',
+    desc: 'Kartu putih bersih dengan logo badge'
+  },
+  {
+    id: 'template2',
+    name: 'Template 2',
+    label: 'Noir Spotlight',
+    desc: 'Background B&W + Aksen garis frame & badge'
+  }
+]
 
 const frameTemplateRef = ref(null)
 const replaceFileInput = ref(null)
@@ -109,12 +125,15 @@ const downloadImage = async () => {
   isDownloading.value = true
 
   try {
-    const el = frameTemplateRef.value.$el || frameTemplateRef.value
+    const rootEl = frameTemplateRef.value.$el || frameTemplateRef.value
+    const targetEl = (rootEl.firstElementChild && rootEl.firstElementChild.nodeType === 1) ? rootEl.firstElementChild : rootEl
     const origW = photoStore.originalDimensions.width
-    const currentW = el.offsetWidth
+    const currentW = targetEl.offsetWidth || rootEl.offsetWidth || 1
 
-    // Calculate pixelRatio so output canvas matches 100% full original resolution
-    const pixelRatio = origW > 0 && currentW > 0 ? Math.max(origW / currentW, 1) : 2
+    // Untuk Template 2, kartu foto berada di dalam background sebesar ~82%, 
+    // jadi kita kalikan 1.22 agar resolusi foto di dalam kartu tetap 100% dari resolusi aslinya.
+    const scaleMultiplier = photoStore.frameConfig.templateId === 'template2' ? 1.22 : 1.0
+    const pixelRatio = origW > 0 && currentW > 0 ? Math.max((origW * scaleMultiplier) / currentW, 1) : 2
 
     if (document.fonts?.ready) {
       await document.fonts.ready
@@ -124,7 +143,7 @@ const downloadImage = async () => {
     // Catatan: html-to-image's toBlob memiliki bug dimana parameter options.type tidak diteruskan
     // ke canvasToBlob sehingga selalu menghasilkan Blob bertipe image/png. Akibatnya browser
     // mendeteksi mismatch MIME type dan otomatis menambahkan ekstensi .png menjadi .jpg.png.
-    const canvas = await toCanvas(el, {
+    const canvas = await toCanvas(targetEl, {
       pixelRatio: pixelRatio,
       cacheBust: false,
     })
@@ -258,6 +277,42 @@ onUnmounted(() => {
       </button>
     </div>
 
+    <!-- Pilihan Template Frame (Template 1 vs Template 2) -->
+    <div v-show="viewMode === 'framed'" class="bg-white border border-hairline rounded-[22px] p-2.5 sm:p-3 shadow-float">
+      <div class="flex items-center justify-between px-1 mb-2">
+        <span class="text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+          <LayoutTemplate class="w-3.5 h-3.5 text-ink" />
+          Pilih Template Bingkai
+        </span>
+        <span class="text-[11px] text-muted font-medium">
+          {{ photoStore.frameConfig.templateId === 'template1' ? 'Template 1 Aktif' : 'Template 2 Aktif' }}
+        </span>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          v-for="tpl in templateOptions"
+          :key="tpl.id"
+          type="button"
+          @click="photoStore.setTemplate(tpl.id)"
+          class="flex flex-col items-start p-2.5 rounded-[16px] border text-left transition-all active:scale-[0.98]"
+          :class="photoStore.frameConfig.templateId === tpl.id 
+            ? 'bg-ink text-white border-ink shadow-sm' 
+            : 'bg-[#f6f8f7] text-ink border-hairline hover:bg-white'"
+        >
+          <div class="flex items-center justify-between w-full">
+            <span class="text-xs font-bold">{{ tpl.name }}</span>
+            <Check v-if="photoStore.frameConfig.templateId === tpl.id" class="w-3.5 h-3.5 text-primary" />
+          </div>
+          <span class="text-[11px] font-medium leading-tight mt-0.5" :class="photoStore.frameConfig.templateId === tpl.id ? 'text-primary' : 'text-ink'">
+            {{ tpl.label }}
+          </span>
+          <span class="text-[10px] leading-tight mt-0.5 line-clamp-1" :class="photoStore.frameConfig.templateId === tpl.id ? 'text-white/70' : 'text-muted'">
+            {{ tpl.desc }}
+          </span>
+        </button>
+      </div>
+    </div>
+
     <!-- Preview stage (tap to replace image) -->
     <div
       class="relative w-full mb-5 rounded-[28px] p-3 sm:p-6 flex flex-col items-center justify-center overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
@@ -374,7 +429,26 @@ onUnmounted(() => {
         <div class="flex items-center justify-between pb-3">
           <div class="flex items-center gap-2">
             <span class="bg-primary text-ink text-xs font-bold px-3 py-1 rounded-full">Full Screen</span>
-            <span class="text-xs font-medium text-muted">
+            <!-- Template switcher di Full Screen -->
+            <div class="flex items-center bg-white/10 rounded-full p-0.5 border border-white/20 text-xs">
+              <button
+                type="button"
+                @click="photoStore.setTemplate('template1')"
+                class="px-2.5 py-0.5 rounded-full transition-colors font-semibold"
+                :class="photoStore.frameConfig.templateId === 'template1' ? 'bg-primary text-ink' : 'text-white/70 hover:text-white'"
+              >
+                T1
+              </button>
+              <button
+                type="button"
+                @click="photoStore.setTemplate('template2')"
+                class="px-2.5 py-0.5 rounded-full transition-colors font-semibold"
+                :class="photoStore.frameConfig.templateId === 'template2' ? 'bg-primary text-ink' : 'text-white/70 hover:text-white'"
+              >
+                T2
+              </button>
+            </div>
+            <span class="text-xs font-medium text-muted hidden sm:inline">
               {{ photoStore.originalDimensions.width }} × {{ photoStore.originalDimensions.height }} px
             </span>
           </div>

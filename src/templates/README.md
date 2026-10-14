@@ -1,9 +1,11 @@
 # 🎨 Panduan Mengedit Template Bingkai Foto
 
-File template bingkai foto terletak di:
-👉 [`src/templates/PhotoFrameTemplate.vue`](file:///c:/Users/ama.lebu/Documents/ProjectiwithAI/src/templates/PhotoFrameTemplate.vue)
+Proyek ini memiliki **2 Template Bingkai Foto** yang bisa Anda pilih dan edit secara langsung layaknya file HTML biasa:
 
-File ini berupa komponen Vue murni dengan **HTML** dan **Tailwind CSS**. Anda bisa bebas mengotak-atik tampilan bingkai seperti mengedit file HTML biasa!
+1. 👉 [`src/templates/PhotoFrameTemplate1.vue`](file:///c:/Users/ama.lebu/Documents/ProjectiwithAI/src/templates/PhotoFrameTemplate1.vue) — **Template 1: Studio Minimal** (Bingkai kartu bersih dengan footer metadata dan logo hexagon badge).
+2. 👉 [`src/templates/PhotoFrameTemplate2.vue`](file:///c:/Users/ama.lebu/Documents/ProjectiwithAI/src/templates/PhotoFrameTemplate2.vue) — **Template 2: Noir Spotlight & Geometric Badge** (Poster rasio 9:16 dengan latar belakang hitam-putih, kartu foto warna di tengah, aksen garis bingkai artistik, dan logo badge).
+
+Kedua file di atas berupa komponen Vue murni dengan **HTML**, **Tailwind CSS**, dan scoped CSS. Anda bebas mengotak-atik tampilan bingkai sesuai selera!
 
 ---
 
@@ -12,36 +14,31 @@ File ini berupa komponen Vue murni dengan **HTML** dan **Tailwind CSS**. Anda bi
 | Variabel | Keterangan | Contoh Nilai |
 | :--- | :--- | :--- |
 | `photoStore.imageUrl` | URL gambar foto asli | `blob:http://...` |
-| `photoStore.metadata.title` | Judul foto (Baris 1) | `"Sol Sepatu"` |
-| `photoStore.metadata.lensInfo` | Info lensa / kamera (Baris 2) | `"Telephoto lens - 69mm"` |
-| `photoStore.fileMetricsRow` | Metrik file (Baris 3) - Array | `["728 KB", "2332x3108", "7MP"]` |
-| `photoStore.exposureSettingsRow` | Parameter eksposur (Baris 4) - Array | `["ISO 25", "69mm", "0.0ev", "F2.4", "1/1250 s"]` |
-| `photoStore.metadata.iso` | ISO saja | `"ISO 25"` |
-| `photoStore.metadata.focalLength`| Focal length saja | `"69mm"` |
+| `photoStore.metadata.title` | Judul foto (Baris 1) | `"Galaxy S25"` |
+| `photoStore.metadata.lensInfo` | Info lensa / kamera (Baris 2) | `"Wide-angle lens - 23mm"` |
+| `photoStore.fileMetricsRow` | Metrik file (Baris 3) - Array | `["3.37 MB", "3000x4000", "12MP"]` |
+| `photoStore.exposureSettingsRow` | Parameter eksposur (Baris 4) - Array | `["ISO 200", "23mm", "0.0ev", "F1.8", "1/100 s"]` |
+| `photoStore.metadata.iso` | ISO saja | `"ISO 200"` |
+| `photoStore.metadata.focalLength`| Focal length saja | `"23mm"` |
 | `photoStore.metadata.ev` | Nilai EV saja | `"0.0ev"` |
-| `photoStore.metadata.aperture` | Nilai Aperture saja | `"F2.4"` |
-| `photoStore.metadata.shutterSpeed`| Kecepatan rana saja | `"1/1250 s"` |
-| `photoStore.metadata.dateTaken` | Tanggal pemotretan | `"13 Okt 2026"` |
+| `photoStore.metadata.aperture` | Nilai Aperture saja | `"F1.8"` |
+| `photoStore.metadata.shutterSpeed`| Kecepatan rana saja | `"1/100 s"` |
+| `photoStore.metadata.dateTaken` | Tanggal pemotretan | `"14 Okt 2026"` |
 
 ---
 
 ### Contoh Kustomisasi:
 
-#### 1. Membuat Teks Rata Tengah (Center)
-Cukup ubah class pada `metadata-footer` menjadi:
+#### 1. Mengubah Warna Garis / Background di Template 2
+Buka [`PhotoFrameTemplate2.vue`](file:///c:/Users/ama.lebu/Documents/ProjectiwithAI/src/templates/PhotoFrameTemplate2.vue), cari class garis:
 ```html
-<div class="metadata-footer text-center pt-3 pb-1 space-y-1">
+<!-- Mengubah warna sudut atas-kanan dari putih ke hijau mint -->
+<div class="... border-white ...">
+<!-- Ubah menjadi: -->
+<div class="... border-primary ...">
 ```
 
-#### 2. Menambahkan Watermark / Nama Fotografer
-Tambahkan baris HTML baru di dalam `metadata-footer`:
-```html
-<p class="text-[10px] text-gray-400 italic">
-  Photo by: Ama Lebu
-</p>
-```
+#### 2. Mengubah / Menghilangkan Logo Badge
+Cari bagian `<!-- LOGO HEXAGON BADGE -->` di masing-masing file template untuk mengganti icon SVG atau menambahkan logo kamu sendiri.
 
-#### 3. Mengubah Warna Bingkai atau Font
-Ubah objek `theme` pada bagian `<script setup>` atau tambahkan style di `<style scoped>`.
-
-Perubahan apapun yang Anda simpan di file ini akan **langsung terlihat secara real-time** pada layar HP maupun pada hasil unduhan (Download Foto JPG 100%)!
+Perubahan apapun yang Anda simpan di file template ini akan **langsung terlihat secara real-time** pada layar HP maupun pada hasil unduhan (Download Foto JPG 100%)!

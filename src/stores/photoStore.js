@@ -39,6 +39,7 @@ export const usePhotoStore = defineStore('photo', {
 
     // Frame styling options
     frameConfig: {
+      templateId: 'template1', // 'template1' | 'template2'
       theme: 'white', // 'white' | 'dark' | 'mint'
       borderScale: 'compact', // 'compact' (paling tipis) | 'normal' | 'spacious'
       exportFormat: 'jpeg', // 'jpeg' (100% quality)
@@ -371,6 +372,12 @@ export const usePhotoStore = defineStore('photo', {
       this.metadata.ev = '0.0ev'
       this.metadata.aperture = 'F2.4'
       this.metadata.shutterSpeed = '1/1250 s'
+    },
+
+    setTemplate(id) {
+      if (this.frameConfig) {
+        this.frameConfig.templateId = id
+      }
     },
 
     // Full reset: Clears photo and metadata to read fresh EXIF on next upload
