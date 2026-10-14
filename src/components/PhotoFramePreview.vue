@@ -13,7 +13,7 @@ import {
   X,
   Type
 } from 'lucide-vue-next'
-import { toBlob } from 'html-to-image'
+import { toCanvas } from 'html-to-image'
 import confetti from 'canvas-confetti'
 import MetadataEditor from './MetadataEditor.vue'
 
@@ -120,11 +120,24 @@ const downloadImage = async () => {
       await document.fonts.ready
     }
 
-    const blob = await toBlob(el, {
+    // Gunakan toCanvas lalu canvas.toBlob('image/jpeg', 1.0)
+    // Catatan: html-to-image's toBlob memiliki bug dimana parameter options.type tidak diteruskan
+    // ke canvasToBlob sehingga selalu menghasilkan Blob bertipe image/png. Akibatnya browser
+    // mendeteksi mismatch MIME type dan otomatis menambahkan ekstensi .png menjadi .jpg.png.
+    const canvas = await toCanvas(el, {
       pixelRatio: pixelRatio,
-      quality: 1.0,
-      type: 'image/jpeg',
       cacheBust: false,
+    })
+
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (b) => {
+          if (b) resolve(b)
+          else reject(new Error('Gagal menghasilkan file JPG dari canvas'))
+        },
+        'image/jpeg',
+        1.0
+      )
     })
 
     if (!blob) {
@@ -133,11 +146,20 @@ const downloadImage = async () => {
 
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    const sanitizedTitle = (photoStore.metadata.title || 'photo')
+
+    // Hapus ekstensi lama jika ada di dalam input judul foto
+    const rawTitle = (photoStore.metadata.title || 'photo')
+      .replace(/\.(jpe?g|png|webp|heic|heif)$/i, '')
+      .trim()
+
+    const sanitizedTitle = (rawTitle || 'photo')
       .toLowerCase()
-      .replace(/[^a-z0-9]/g, '_')
+      .replace(/[^a-z0-9_-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '')
+
     a.href = url
-    a.download = `${sanitizedTitle}_framed.jpg`
+    a.download = `${sanitizedTitle || 'photo'}_framed.jpg`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
